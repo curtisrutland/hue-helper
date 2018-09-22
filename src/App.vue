@@ -1,29 +1,35 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
-  </div>
+  <v-app>
+    <v-toolbar app color="white">
+      <v-spacer></v-spacer>
+      <v-toolbar-title v-text="title" :style="titleStyle"></v-toolbar-title>
+      <v-spacer></v-spacer>
+    </v-toolbar>
+    <v-content>
+      <v-container fluid>
+        <v-slide-y-transition mode="out-in">
+          <v-layout column align-center>
+            <LightPanel :groupId="1" />
+          </v-layout>
+        </v-slide-y-transition>
+      </v-container>
+    </v-content>
+  </v-app>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from './components/HelloWorld.vue';
+<script>
+import LightPanel from "@/components/LightPanel.vue";
 
-@Component({
+export default {
+  name: "App",
   components: {
-    HelloWorld,
+    LightPanel
   },
-})
-export default class App extends Vue {}
+  data() {
+    return {
+      title: "Hue Helper",
+      titleStyle: { marginLeft: 0 }
+    };
+  }
+};
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>

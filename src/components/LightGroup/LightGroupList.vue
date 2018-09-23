@@ -1,6 +1,8 @@
 <template>
   <v-layout column align-center>
-    <LightGroupPanel  v-for="(group, id) in hueState.groups" :key="id" :groupId="id" :group="group">
+    <LightGroupPanel  v-for="(group, id) in hueState.groups" 
+      :key="id" :groupId="id" :group="group"
+      @refresh="onRefresh">
     </LightGroupPanel>        
   </v-layout>
 </template>
@@ -8,7 +10,7 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { State, Action } from "vuex-class";
 import { HueState, bindingOptions as hueBinding } from "@/store/hue";
-import { UpdateGroupPayload } from "@/api/hue";
+import { UpdateGroupPayload } from "@/models/group";
 import LightGroupPanel from "@/components/LightGroup/LightGroupPanel.vue";
 
 @Component({
@@ -25,6 +27,10 @@ export default class LightGroupList extends Vue {
 
   mounted() {
     console.log("mounted");
+    this.getState();
+  }
+
+  onRefresh() {
     this.getState();
   }
 }

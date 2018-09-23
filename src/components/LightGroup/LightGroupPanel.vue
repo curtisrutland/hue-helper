@@ -33,7 +33,19 @@
       </v-btn>
     </v-card-title>
     <v-card-actions>
+      <v-btn icon @click="refresh">
+        <v-icon>refresh</v-icon>
+      </v-btn>
       <v-spacer></v-spacer>
+      <v-btn icon @click="nightPreset">
+        <v-icon>brightness_3</v-icon>
+      </v-btn>
+      <v-btn icon @click="dimPreset">
+        <v-icon>brightness_4</v-icon>
+      </v-btn>
+      <v-btn icon @click="brightPreset">
+        <v-icon>brightness_5</v-icon>
+      </v-btn>
       <v-btn icon @click="toggle">
         <v-icon :color="powerIconColor">power_settings_new</v-icon>
       </v-btn>
@@ -42,20 +54,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch, Emit } from "vue-property-decorator";
 import { Action } from "vuex-class";
 import {
   Group,
   UpdateGroupPayload,
   defaultGroup,
-  GroupAction
-} from "@/api/hue";
+  GroupAction,
+  actionPresets
+} from "@/models/group";
 import { bindingOptions as hueBinding, HueState } from "@/store/hue";
 import hsvToRgb from "@/helpers/hsvToRgb";
 import { debounce } from "throttle-debounce";
 
 @Component
-export default class LightGroupPanel2 extends Vue {
+export default class LightGroupPanel extends Vue {
   @Prop() private group!: Group;
   @Prop() private groupId!: string;
 
@@ -102,6 +115,21 @@ export default class LightGroupPanel2 extends Vue {
 
   @Action("setGroupState", hueBinding)
   private setGroupState!: (payload: UpdateGroupPayload) => void;
+
+  @Emit("refresh")
+  private refresh() { }
+
+  private brightPreset() {
+    this.setGroupState(this.createPayload(actionPresets.bright));
+  }
+
+  private dimPreset() {
+    this.setGroupState(this.createPayload(actionPresets.dim));
+  }
+
+  private nightPreset() {
+    this.setGroupState(this.createPayload(actionPresets.night));
+  }
 
   private toggle() {
     this.setGroupState(this.createPayload({ on: !this.on }));

@@ -66,3 +66,9 @@ export const defaultGroup: Group = {
 export const defaultGroups: Groups = {
     "1": { ...defaultGroup }
 }
+
+const bright: GroupAction = { bri: 254, hue: 8402, sat: 140 };
+const dim: GroupAction = { bri: 77, hue: 8402, sat: 140 };
+const night: GroupAction = { bri: 30, hue: 8402, sat: 140 };
+
+export const actionPresets = { bright, dim, night };

@@ -1,15 +1,17 @@
 import { Group, Groups, GroupAction } from "@/models/group";
-import { get, put, delay } from "./api";
+import { get, put, post, getStoredUsername, storeUsername } from "./api";
 import { Bridge } from '@/models/bridge';
+import { AddUserRequest, AddUserResponse } from "@/models/user";
 
-export * from "@/models/group";
-
+const HUE_APP_IDENTIFIER = "hue_helper#app";
 
 class HueApi {
-    private discoUrl = process.env.VUE_APP_HUE_DISCOVERY_URL || "";
-    private username = process.env.VUE_APP_HUE_USERNAME;
+    private hueDiscoveryUrl = process.env.VUE_APP_HUE_DISCOVERY_URL || "";
+    private username: string | null = null;
     private rootUrl = "";
-    private get apiUrl() { return  `${this.rootUrl}/api/${this.username}`; }
+    private bridgeId = "";
+    private get apiRootUrl() { return `${this.rootUrl}/api`; }
+    private get apiUrl() { return `${this.apiRootUrl}/${this.username}`; }
     private get groupUrl() { return `${this.apiUrl}/groups`; }
 
     public async getGroups(): Promise<Groups> {
@@ -30,15 +32,42 @@ class HueApi {
         }
     }
 
+    public async createUser(): Promise<boolean> {
+        const req: AddUserRequest = { devicetype: HUE_APP_IDENTIFIER };
+        const res = await post<AddUserResponse[]>(this.apiRootUrl, req);
+        if(!res || !res.length) {
+            console.error("bad problem");
+            return false;
+        }
+        const response = res[0];
+        if (response.error) {
+            return false;
+        } else if (response.success) {
+            const { username } = response.success;
+            storeUsername(this.bridgeId, username);
+            this.username = username;
+            return true;
+        } else {
+            console.error("something very wrong");
+            debugger;
+            return false;
+        }
+    }
+
     public async discover(): Promise<void> {
-        //await delay(1000);
-        const bridges =  await get<Bridge[]>(this.discoUrl);
-        if(!bridges || !bridges.length) {
+        const bridges = await get<Bridge[]>(this.hueDiscoveryUrl);
+        if (!bridges || !bridges.length) {
             throw "No Bridges";
         }
         this.rootUrl = `http://${bridges[0].internalipaddress}`;
+        this.bridgeId = bridges[0].id;
+    }
+
+    public getStoredUsername(): boolean {
+        if (this.bridgeId == null) return false;
+        this.username = getStoredUsername(this.bridgeId);
+        return this.username != null;
     }
 }
 
-//export const hue = new HueApi();
-export const Hue = new HueApi();
+export default new HueApi();

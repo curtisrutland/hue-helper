@@ -1,15 +1,16 @@
 import { Module, ActionTree, MutationTree } from 'vuex';
 import { RootState } from "..";
 import { HueState } from "./types";
-import { Hue, Groups, UpdateGroupPayload, defaultGroups } from "@/api/hue";
-
+import Hue from "@/api/hue";
+import { Groups, UpdateGroupPayload, defaultGroups } from "@/models/group";
 export * from "./types";
 
 
 const state: HueState = {
     groups: { ...defaultGroups },
     discoveryComplete: false,
-    discoveryError: false
+    discoveryError: false,
+    userCreated: false
 }
 
 const actions: ActionTree<HueState, RootState> = {
@@ -17,8 +18,16 @@ const actions: ActionTree<HueState, RootState> = {
         try {
             await Hue.discover();
             commit("discoveryComplete");
+            if (Hue.getStoredUsername()) {
+                commit("userCreated");
+            }
         } catch (err) {
             commit("discoveryError");
+        }
+    },
+    async createUser({ commit }) {
+        if (await Hue.createUser()) {
+            commit("userCreated");
         }
     },
     async getState({ commit }) {
@@ -43,6 +52,9 @@ const mutations: MutationTree<HueState> = {
     discoveryError(state) {
         state.discoveryError = true;
         state.discoveryComplete = true;
+    },
+    userCreated(state) {
+        state.userCreated = true;
     }
 }
 

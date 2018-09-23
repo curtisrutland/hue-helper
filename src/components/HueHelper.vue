@@ -1,8 +1,6 @@
 <template>
-  <LightGroupList v-if="discoveryComplete" />
-  <v-layout v-else column align-center>
-    <h2>{{ discoveryError ? "Error" : "Discovering Bridge"}}</h2>
-  </v-layout>
+  <LightGroupList v-if="showLightGroups" />
+  <HueDiscovery v-else />
 </template>
 
 
@@ -11,19 +9,17 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 import { State, Action } from "vuex-class";
 import { HueState, bindingOptions as hueBinding } from "@/store/hue";
 import LightGroupList from "@/components/LightGroup/LightGroupList.vue";
+import HueDiscovery from "@/components/HueDiscovery.vue";
 
 @Component({
-  components: { LightGroupList }
+  components: { LightGroupList, HueDiscovery }
 })
 export default class HueHelper extends Vue {
   @State("hue") hueState!: HueState;
 
-  get discoveryError() {
-    return this.hueState.discoveryError;
-  }
-
-  get discoveryComplete() {
-    return this.hueState.discoveryComplete && !this.hueState.discoveryError;
+  get showLightGroups() {
+    const { discoveryComplete, discoveryError, userCreated } = this.hueState;
+    return discoveryComplete && !discoveryError && userCreated;
   }
 
   @Action("discover", hueBinding)

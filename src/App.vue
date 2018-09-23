@@ -1,29 +1,25 @@
 <template>
-  <v-app>
-    <v-toolbar app color="white">
+  <v-app dark>
+    <v-toolbar app>
       <v-spacer></v-spacer>
       <v-toolbar-title v-text="title" :style="titleStyle"></v-toolbar-title>
       <v-spacer></v-spacer>
     </v-toolbar>
     <v-content>
       <v-container fluid>
-        <v-slide-y-transition mode="out-in">
-          <v-layout column align-center>
-            <LightPanel :groupId="1" />
-          </v-layout>
-        </v-slide-y-transition>
+        <HueHelper></HueHelper>
       </v-container>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import LightPanel from "@/components/LightPanel.vue";
+import HueHelper from "@/components/HueHelper.vue";
 
 export default {
   name: "App",
   components: {
-    LightPanel
+    HueHelper
   },
   data() {
     return {

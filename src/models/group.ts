@@ -25,3 +25,44 @@ export interface Group {
     class: string;
     action: GroupAction;
 }
+
+export interface Groups {
+    [id: string]: Group;
+}
+
+export interface UpdateGroupPayload {
+    groupId: string;
+    action: GroupAction
+}
+
+const defaultGroupAction: GroupAction = {
+    on: false,
+    bri: 1,
+    hue: 0,
+    sat: 0,
+    effect: "",
+    xy: [],
+    ct: 0,
+    alert: "",
+    colormode: ""
+}
+
+const defaultGroupState: GroupState = {
+    all_on: false,
+    any_on: false
+}
+
+export const defaultGroup: Group = {
+    name: "",
+    lights: [],
+    sensors: [],
+    type: "",
+    state: { ...defaultGroupState },
+    recycle: false,
+    class: "",
+    action: { ...defaultGroupAction }
+}
+
+export const defaultGroups: Groups = {
+    "1": { ...defaultGroup }
+}

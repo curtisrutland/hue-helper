@@ -11,3 +11,7 @@ export async function put<T>(url: string, data: any) {
     });
     return await response.json() as T;
 }
+
+export function delay(ms: number): Promise<void> {
+    return new Promise(res => setTimeout(res, ms));
+}

@@ -1,5 +1,5 @@
 import { Group, Groups, GroupAction } from "@/models/group";
-import { get, put } from "./api";
+import { get, put, delay } from "./api";
 import { Bridge } from '@/models/bridge';
 
 export * from "@/models/group";
@@ -8,9 +8,9 @@ export * from "@/models/group";
 class HueApi {
     private discoUrl = process.env.VUE_APP_HUE_DISCOVERY_URL || "";
     private username = process.env.VUE_APP_HUE_USERNAME;
-    private rootUrl = process.env.VUE_APP_HUE_URL;
-    private apiUrl = `${this.rootUrl}/api/${this.username}`;
-    private groupUrl = `${this.apiUrl}/groups`;
+    private rootUrl = "";
+    private get apiUrl() { return  `${this.rootUrl}/api/${this.username}`; }
+    private get groupUrl() { return `${this.apiUrl}/groups`; }
 
     public async getGroups(): Promise<Groups> {
         return await get<Groups>(this.groupUrl);
@@ -31,6 +31,7 @@ class HueApi {
     }
 
     public async discover(): Promise<void> {
+        //await delay(1000);
         const bridges =  await get<Bridge[]>(this.discoUrl);
         if(!bridges || !bridges.length) {
             throw "No Bridges";

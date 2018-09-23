@@ -22,10 +22,11 @@ const actions: ActionTree<HueState, RootState> = {
         }
     },
     async getState({ commit }) {
+        console.log("get state");
         const groups = await Hue.getGroups();
         commit("getStateComplete", groups);
     },
-    async setGroupState({ commit, dispatch }, { groupId, action }: UpdateGroupPayload) {
+    async setGroupState({ dispatch }, { groupId, action }: UpdateGroupPayload) {
         await Hue.setGroupAction(groupId, action);
         dispatch("getState", null);
     }

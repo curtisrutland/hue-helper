@@ -40,6 +40,7 @@
     </v-card-actions>
   </v-card>
 </template>
+
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { Action } from "vuex-class";
@@ -82,7 +83,6 @@ export default class LightGroupPanel2 extends Vue {
       group.action.sat || 1,
       group.action.bri || 1
     );
-    console.log(this.lightColor);
   }
 
   @Watch("brightness")
@@ -107,20 +107,17 @@ export default class LightGroupPanel2 extends Vue {
     this.setGroupState(this.createPayload({ on: !this.on }));
   }
 
-  private updateBrightness = debounce(50, (bri: number) => {
-    console.log("update brightness");
-    this.setGroupState(this.createPayload({ bri }));
-  });
+  private updateBrightness = debounce(50, (bri: number) =>
+    this.setGroupState(this.createPayload({ bri }))
+  );
 
-  private updateHue = debounce(50, hue => {
-    console.log("update hue");
-    this.setGroupState(this.createPayload({ hue }));
-  });
+  private updateHue = debounce(50, hue =>
+    this.setGroupState(this.createPayload({ hue }))
+  );
 
-  private updateSaturation = debounce(50, sat => {
-    console.log("update saturation");
-    this.setGroupState(this.createPayload({sat}));
-  })
+  private updateSaturation = debounce(50, sat =>
+    this.setGroupState(this.createPayload({ sat }))
+  );
 
   private createPayload(action: GroupAction): UpdateGroupPayload {
     return { groupId: this.groupId, action };
